@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ALTAIR</title>
+<link rel="icon" href="static/MARK ONLY TRANSPARENT BG.png" type="image/x-icon">
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600&family=Inconsolata:wght@300;400&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -452,16 +453,7 @@
 
   </section>
 
-  <footer class="bottom-nav">
-    <a href="detail-4.html" class="nav-pill" data-transition>
-      <svg viewBox="0 0 14 14"><path d="M9 2L4 7l5 5"/></svg>
-      prev collection
-    </a>
-    <a href="detail-2.html" class="nav-pill" data-transition>
-      next collection
-      <svg viewBox="0 0 14 14"><path d="M5 2l5 5-5 5"/></svg>
-    </a>
-  </footer>
+  
 
 </main>
 
@@ -492,7 +484,7 @@
     entries.forEach(entry => {
       if (entry.isIntersecting) {
         const card = entry.target;
-        const delay = (visibleCount % 10) * 30; // stagger in groups
+        const delay = (visibleCount % 10) * 30; 
         visibleCount++;
         setTimeout(() => card.classList.add('visible'), delay);
         obs.unobserve(card);
