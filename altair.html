@@ -58,13 +58,13 @@
   .divider { height:1px; background:linear-gradient(90deg, rgba(var(--accent-rgb),0.4), rgba(var(--accent-rgb),0.1) 50%, transparent); opacity:0; animation:fadeUp 0.6s ease 0.3s forwards; }
 
   /* grid */
-  .photo-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(clamp(220px,16vw,200px),1fr)); gap:clamp(12px,2vw,22px); flex:1; }
+  .photo-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(clamp(220px,16vw,200px),1fr)); gap:clamp(8px,1.5vw,12px); flex:1; }
 
   /* photo card */
   .photo-card { position:relative; aspect-ratio:1; border-radius:var(--radius); overflow:hidden; cursor:pointer; text-decoration:none; display:block; border:1px solid var(--card-border); opacity:0; transform:scale(0.9) translateY(16px); }
-  .photo-card.visible { animation:cardPop 0.6s cubic-bezier(0.16,1,0.3,1) forwards; overflow: visible; text-align: center; aspect-ratio:auto; margin-bottom:5px}
+  .photo-card.visible { animation:cardPop 0.6s cubic-bezier(0.16,1,0.3,1) forwards; overflow: visible; text-align:left; aspect-ratio:auto; margin-bottom:5px}
   .photo-card img { width:100%; height:100%; object-fit:cover; display:block; transition:transform 0.55s cubic-bezier(0.23,1,0.32,1), filter 0.55s ease; filter:grayscale(20%) brightness(0.85); }
-  .photo-card:hover img {filter:grayscale(0%) brightness(1); }
+  .photo-card:hover img { filter:grayscale(0%) brightness(1); }
   /* overlay on hover */
   .photo-card-overlay { position:absolute; inset:0; background:linear-gradient(to top, rgba(0,0,0,0.75) 0%, rgba(0,0,0,0.1) 50%, transparent 100%); opacity:0; transition:opacity 0.4s ease; display:flex; flex-direction:column; justify-content:flex-end; padding:clamp(10px,2vw,16px); }
   .photo-card:hover .photo-card-overlay { opacity:1; }
@@ -104,7 +104,14 @@
     .photo-card-overlay {padding:10px;}
     .photo-cta {font-size:8px;gap:3px;}
   }
-  
+  .photo-card:hover .portrait-name{opacity:0;}
+
+  .portrait-card {position: relative;aspect-ratio: 3/4; overflow: hidden;background: #111;border-radius: 10px;}
+
+  .portrait-card img {width: 100%;height: 100%;object-fit: cover;}
+
+  .portrait-name {position: absolute;bottom: 20px;left: 9px;opacity:1;transition: opacity 0.3s ease-in-out;font-family:'Inconsolata',monospace;font-size: clamp(20px, 3vw,48px);font-weight: 1000;color: #000;writing-mode: vertical-rl;transform: rotate(180deg); letter-spacing: 0.1em;}
+
 </style>
 </head>
 <body>
@@ -120,7 +127,7 @@
       All Collections
     </a>
     <div class="nav-right">
-      <span class="nav-label">01 — WARM</span>
+      <span class="nav-label">01 — ALTAIR</span>
       <div class="nav-dots">
         <div class="nav-dot active"></div>
         <div class="nav-dot"></div>
@@ -135,9 +142,9 @@
       <div>
         <p class="header-eyebrow">hinawari vol. 26</p>
         <h1 class="header-title"><em>Altair</em></h1>
-        <p class="header-sub">hi kahila</p>
+        <p class="header-sub">Hover over the pictures to view. <br>Click to write them a grad letter!</p>
       </div>
-      <div class="count-badge"><span>30</span> letters archived</div>
+      <div class="count-badge"><span>27</span> letters archived</div>
     </div>
   </header>
 
@@ -145,249 +152,302 @@
 
   <section class="photo-grid" id="photo-grid">
     <a href="" class="photo-card" target="_blank" rel="noopener">
-      <img src="static/ALTAIR/APALE.JPG" alt="APALE" loading="lazy">
       <span class="photo-index">01</span>
-      <div class="photo-card-overlay">
+      <div class="portrait-card">
+     <img src="static/ALTAIR/APALE.JPG" alt="SAM">
+        <div class="photo-card-overlay">
         <p class="photo-name">The Social Heartbeat</p>
         <p class="photo-cta">Write a Letter! <svg viewBox="0 0 10 10"><path d="M2 5h6M5 2l3 3-3 3"/></svg></p>
       </div>
-      <p class="photo-person">SAMUEL</p>
-      <div class="photo-card-line"></div>
-    </a>
-    <a href="" class="photo-card" target="_blank" rel="noopener">
-      <img src="static/ALTAIR/ARENAS.JPG" alt="ARENAS" loading="lazy">
+    <div class="portrait-name">SAM</div>
+    </div>
+
+   <a href="" class="photo-card" target="_blank" rel="noopener">
       <span class="photo-index">02</span>
-      <div class="photo-card-overlay">
+      <div class="portrait-card">
+     <img src="static/ALTAIR/ARENAS.JPG" alt="ALBERT">
+        <div class="photo-card-overlay">
         <p class="photo-name">The Sonic Boom</p>
         <p class="photo-cta">Write a Letter! <svg viewBox="0 0 10 10"><path d="M2 5h6M5 2l3 3-3 3"/></svg></p>
       </div>
-      <div class="photo-card-line"></div>
-    </a>
-    <a href="" class="photo-card" target="_blank" rel="noopener">
-      <img src="static/ALTAIR/BAMBOA.JPG" alt="BAMBOA" loading="lazy">
+    <div class="portrait-name">ALBERT</div>
+    </div>
+
+     <a href="" class="photo-card" target="_blank" rel="noopener">
       <span class="photo-index">03</span>
-      <div class="photo-card-overlay">
+      <div class="portrait-card">
+     <img src="static/ALTAIR/BAMBOA.JPG" alt="ANNIKA">
+        <div class="photo-card-overlay">
         <p class="photo-name">The Leading Lady</p>
         <p class="photo-cta">Write a Letter! <svg viewBox="0 0 10 10"><path d="M2 5h6M5 2l3 3-3 3"/></svg></p>
       </div>
-      <div class="photo-card-line"></div>
-    </a>
+    <div class="portrait-name">ANNIKA</div>
+    </div>
+
     <a href="" class="photo-card" target="_blank" rel="noopener">
-      <img src="static/ALTAIR/BANGUIS.JPG" alt="BANGUIS" loading="lazy">
       <span class="photo-index">04</span>
-      <div class="photo-card-overlay">
+      <div class="portrait-card">
+     <img src="static/ALTAIR/BANGUIS.JPG" alt="RAPH">
+        <div class="photo-card-overlay">
         <p class="photo-name">The Renaissance Man</p>
         <p class="photo-cta">Write a Letter! <svg viewBox="0 0 10 10"><path d="M2 5h6M5 2l3 3-3 3"/></svg></p>
       </div>
-      <div class="photo-card-line"></div>
-    </a>
+    <div class="portrait-name">RAPH</div>
+    </div>
+
     <a href="" class="photo-card" target="_blank" rel="noopener">
-      <img src="static/ALTAIR/BLARDONY.JPG" alt="BLARDONY" loading="lazy">
       <span class="photo-index">05</span>
-      <div class="photo-card-overlay">
+      <div class="portrait-card">
+     <img src="static/ALTAIR/BLARDONY.JPG" alt="CLAIRE">
+        <div class="photo-card-overlay">
         <p class="photo-name">The Sweet Canary</p>
         <p class="photo-cta">Write a Letter! <svg viewBox="0 0 10 10"><path d="M2 5h6M5 2l3 3-3 3"/></svg></p>
       </div>
-      <div class="photo-card-line"></div>
-    </a>
+    <div class="portrait-name">CLAIRE</div>
+    </div>
+
     <a href="" class="photo-card" target="_blank" rel="noopener">
-      <img src="static/ALTAIR/COCJIN.JPG" alt="COCJIN" loading="lazy">
       <span class="photo-index">06</span>
-      <div class="photo-card-overlay">
+      <div class="portrait-card">
+     <img src="static/ALTAIR/COCJIN.JPG" alt="MERIELLE">
+        <div class="photo-card-overlay">
         <p class="photo-name">Woman of the Hour</p>
         <p class="photo-cta">Write a Letter! <svg viewBox="0 0 10 10"><path d="M2 5h6M5 2l3 3-3 3"/></svg></p>
       </div>
-      <div class="photo-card-line"></div>
-    </a>
+    <div class="portrait-name">MERIELLE</div>
+    </div>
+
     <a href="" class="photo-card" target="_blank" rel="noopener">
-      <img src="static/ALTAIR/DE CASTRO.JPG" alt="DE CASTRO" loading="lazy">
       <span class="photo-index">07</span>
-      <div class="photo-card-overlay">
-        <p class="photo-name">The Mad Logician</p>
+      <div class="portrait-card">
+     <img src="static/ALTAIR/DE CASTRO.JPG" alt="PAULO">
+        <div class="photo-card-overlay">
+        <p class="photo-name">The Mad Logician </p>
         <p class="photo-cta">Write a Letter! <svg viewBox="0 0 10 10"><path d="M2 5h6M5 2l3 3-3 3"/></svg></p>
       </div>
-      <div class="photo-card-line"></div>
-    </a>
+    <div class="portrait-name">PAULO</div>
+    </div>
+
     <a href="" class="photo-card" target="_blank" rel="noopener">
-      <img src="static/ALTAIR/DURIAS.JPG" alt="DURIAS" loading="lazy">
       <span class="photo-index">08</span>
-      <div class="photo-card-overlay">
+      <div class="portrait-card">
+     <img src="static/ALTAIR/DURIAS.JPG" alt="CAELAN">
+        <div class="photo-card-overlay">
         <p class="photo-name">Masked Muse</p>
         <p class="photo-cta">Write a Letter! <svg viewBox="0 0 10 10"><path d="M2 5h6M5 2l3 3-3 3"/></svg></p>
       </div>
-      <div class="photo-card-line"></div>
-    </a>
+    <div class="portrait-name">CAELAN</div>
+    </div>
+
     <a href="" class="photo-card" target="_blank" rel="noopener">
-      <img src="static/ALTAIR/ELIZAN.JPG" alt="ELIZAN" loading="lazy">
       <span class="photo-index">09</span>
-      <div class="photo-card-overlay">
+      <div class="portrait-card">
+     <img src="static/ALTAIR/ELIZAN.JPG" alt="LAV">
+        <div class="photo-card-overlay">
         <p class="photo-name">Maharani</p>
         <p class="photo-cta">Write a Letter! <svg viewBox="0 0 10 10"><path d="M2 5h6M5 2l3 3-3 3"/></svg></p>
       </div>
-      <div class="photo-card-line"></div>
-    </a>
+    <div class="portrait-name">LAVINIA</div>
+    </div>
+
     <a href="" class="photo-card" target="_blank" rel="noopener">
-      <img src="static/ALTAIR/GASPAR.JPG" alt="GASPAR" loading="lazy">
       <span class="photo-index">10</span>
-      <div class="photo-card-overlay">
+      <div class="portrait-card">
+     <img src="static/ALTAIR/BANGUIS.JPG" alt="RAPH">
+        <div class="photo-card-overlay">
+        <p class="photo-name">The Renaissance Man</p>
+        <p class="photo-cta">Write a Letter! <svg viewBox="0 0 10 10"><path d="M2 5h6M5 2l3 3-3 3"/></svg></p>
+      </div>
+    <div class="portrait-name">RAPH</div>
+    </div>
+
+    <a href="" class="photo-card" target="_blank" rel="noopener">
+      <span class="photo-index">11</span>
+      <div class="portrait-card">
+     <img src="static/ALTAIR/GASPAR.JPG" alt="BD">
+        <div class="photo-card-overlay">
         <p class="photo-name">The Page Turner</p>
         <p class="photo-cta">Write a Letter! <svg viewBox="0 0 10 10"><path d="M2 5h6M5 2l3 3-3 3"/></svg></p>
       </div>
-      <div class="photo-card-line"></div>
-    </a>
+    <div class="portrait-name">BD</div>
+    </div>
+
     <a href="" class="photo-card" target="_blank" rel="noopener">
-      <img src="static/ALTAIR/GREGORIO.JPG" alt="GREGORIO" loading="lazy">
-      <span class="photo-index">11</span>
-      <div class="photo-card-overlay">
+      <span class="photo-index">12</span>
+      <div class="portrait-card">
+     <img src="static/ALTAIR/GREGORIO.JPG" alt="NISHA">
+        <div class="photo-card-overlay">
         <p class="photo-name">The Artwright</p>
         <p class="photo-cta">Write a Letter! <svg viewBox="0 0 10 10"><path d="M2 5h6M5 2l3 3-3 3"/></svg></p>
       </div>
-      <div class="photo-card-line"></div>
-    </a>
+    <div class="portrait-name">NISHA</div>
+    </div>
+
     <a href="" class="photo-card" target="_blank" rel="noopener">
-      <img src="static/ALTAIR/GUSAD.JPG" alt="GUSAD" loading="lazy">
-      <span class="photo-index">12</span>
-      <div class="photo-card-overlay">
+      <span class="photo-index">13</span>
+      <div class="portrait-card">
+     <img src="static/ALTAIR/GUSAD.JPG" alt="ANISHKA">
+        <div class="photo-card-overlay">
         <p class="photo-name">The Cosmic Groove</p>
         <p class="photo-cta">Write a Letter! <svg viewBox="0 0 10 10"><path d="M2 5h6M5 2l3 3-3 3"/></svg></p>
       </div>
-      <div class="photo-card-line"></div>
-    </a>
+    <div class="portrait-name">ANISHKA</div>
+    </div>
+
     <a href="" class="photo-card" target="_blank" rel="noopener">
-      <img src="static/ALTAIR/KIM SANG.JPG" alt="KIM SANG" loading="lazy">
-      <span class="photo-index">13</span>
-      <div class="photo-card-overlay">
+      <span class="photo-index">14</span>
+      <div class="portrait-card">
+     <img src="static/ALTAIR/KIM SANG.JPG" alt="SANGJIN">
+        <div class="photo-card-overlay">
         <p class="photo-name">The Court Lighthouse</p>
         <p class="photo-cta">Write a Letter! <svg viewBox="0 0 10 10"><path d="M2 5h6M5 2l3 3-3 3"/></svg></p>
       </div>
-      <div class="photo-card-line"></div>
-    </a>
+    <div class="portrait-name">SANGJIN</div>
+    </div>
+
     <a href="" class="photo-card" target="_blank" rel="noopener">
-      <img src="static/ALTAIR/LAID.JPG" alt="LAID" loading="lazy">
-      <span class="photo-index">14</span>
-      <div class="photo-card-overlay">
+      <span class="photo-index">15</span>
+      <div class="portrait-card">
+     <img src="static/ALTAIR/LAID.JPG" alt="ZILD">
+        <div class="photo-card-overlay">
         <p class="photo-name">The Overture</p>
         <p class="photo-cta">Write a Letter! <svg viewBox="0 0 10 10"><path d="M2 5h6M5 2l3 3-3 3"/></svg></p>
       </div>
-      <div class="photo-card-line"></div>
-    </a>
+    <div class="portrait-name">ZILD</div>
+    </div>
+
     <a href="" class="photo-card" target="_blank" rel="noopener">
-      <img src="static/ALTAIR/LAPE.JPG" alt="LAPE" loading="lazy">
-      <span class="photo-index">15</span>
-      <div class="photo-card-overlay">
+      <span class="photo-index">16</span>
+      <div class="portrait-card">
+     <img src="static/ALTAIR/LAPE.JPG" alt="DANICA">
+        <div class="photo-card-overlay">
         <p class="photo-name">Agile Aurora</p>
         <p class="photo-cta">Write a Letter! <svg viewBox="0 0 10 10"><path d="M2 5h6M5 2l3 3-3 3"/></svg></p>
       </div>
-      <div class="photo-card-line"></div>
-    </a>
+    <div class="portrait-name">DANICA</div>
+    </div>
+
     <a href="" class="photo-card" target="_blank" rel="noopener">
-      <img src="static/ALTAIR/MACEDA.JPG" alt="MACEDA" loading="lazy">
-      <span class="photo-index">16</span>
-      <div class="photo-card-overlay">
+      <span class="photo-index">17</span>
+      <div class="portrait-card">
+     <img src="static/ALTAIR/MACEDA.JPG" alt="MGM">
+        <div class="photo-card-overlay">
         <p class="photo-name">The Softspoken Spinner</p>
         <p class="photo-cta">Write a Letter! <svg viewBox="0 0 10 10"><path d="M2 5h6M5 2l3 3-3 3"/></svg></p>
       </div>
-      <div class="photo-card-line"></div>
-    </a>
+    <div class="portrait-name">MACEDA</div>
+    </div>
+
     <a href="" class="photo-card" target="_blank" rel="noopener">
-      <img src="static/ALTAIR/MACHICA.JPG" alt="MACHICA" loading="lazy">
-      <span class="photo-index">17</span>
-      <div class="photo-card-overlay">
+      <span class="photo-index">18</span>
+      <div class="portrait-card">
+     <img src="static/ALTAIR/MACHICA.JPG" alt="KATE">
+        <div class="photo-card-overlay">
         <p class="photo-name">The Reserved Muse</p>
         <p class="photo-cta">Write a Letter! <svg viewBox="0 0 10 10"><path d="M2 5h6M5 2l3 3-3 3"/></svg></p>
       </div>
-      <div class="photo-card-line"></div>
-    </a>
+    <div class="portrait-name">KATE</div>
+    </div>
+
     <a href="" class="photo-card" target="_blank" rel="noopener">
-      <img src="static/ALTAIR/MANTILLA.JPG" alt="MANTILLA" loading="lazy">
-      <span class="photo-index">18</span>
-      <div class="photo-card-overlay">
+      <span class="photo-index">19</span>
+      <div class="portrait-card">
+     <img src="static/ALTAIR/MANTILLA.JPG" alt="ANNE">
+        <div class="photo-card-overlay">
         <p class="photo-name">Our Beloved Summer</p>
         <p class="photo-cta">Write a Letter! <svg viewBox="0 0 10 10"><path d="M2 5h6M5 2l3 3-3 3"/></svg></p>
       </div>
-      <div class="photo-card-line"></div>
-    </a>
+    <div class="portrait-name">ANNE</div>
+    </div>
+
     <a href="" class="photo-card" target="_blank" rel="noopener">
-      <img src="static/ALTAIR/MATOBATO.JPG" alt="MATOBATO" loading="lazy">
-      <span class="photo-index">19</span>
-      <div class="photo-card-overlay">
+      <span class="photo-index">20</span>
+      <div class="portrait-card">
+     <img src="static/ALTAIR/MATOBATO.JPG" alt="JOSE">
+        <div class="photo-card-overlay">
         <p class="photo-name">The Resonance</p>
         <p class="photo-cta">Write a Letter! <svg viewBox="0 0 10 10"><path d="M2 5h6M5 2l3 3-3 3"/></svg></p>
       </div>
-      <div class="photo-card-line"></div>
-    </a>
+    <div class="portrait-name">JOSE</div>
+    </div>
+
     <a href="" class="photo-card" target="_blank" rel="noopener">
-      <img src="static/ALTAIR/NASAYAO.JPG" alt="NASAYAO" loading="lazy">
-      <span class="photo-index">20</span>
-      <div class="photo-card-overlay">
+      <span class="photo-index">21</span>
+      <div class="portrait-card">
+     <img src="static/ALTAIR/NASAYAO.JPG" alt="KYLE">
+        <div class="photo-card-overlay">
         <p class="photo-name">The Ciphered Gem</p>
         <p class="photo-cta">Write a Letter! <svg viewBox="0 0 10 10"><path d="M2 5h6M5 2l3 3-3 3"/></svg></p>
       </div>
-      <div class="photo-card-line"></div>
-    </a>
+    <div class="portrait-name">KYLE</div>
+    </div>
+
     <a href="" class="photo-card" target="_blank" rel="noopener">
-      <img src="static/ALTAIR/NECESITO.JPG" alt="NECESITO" loading="lazy">
-      <span class="photo-index">21</span>
-      <div class="photo-card-overlay">
+      <span class="photo-index">22</span>
+      <div class="portrait-card">
+     <img src="static/ALTAIR/NECESITO.JPG" alt="SIL">
+        <div class="photo-card-overlay">
         <p class="photo-name">The Erudite</p>
         <p class="photo-cta">Write a Letter! <svg viewBox="0 0 10 10"><path d="M2 5h6M5 2l3 3-3 3"/></svg></p>
       </div>
-      <div class="photo-card-line"></div>
-    </a>
+    <div class="portrait-name">SIL</div>
+    </div>
+
     <a href="" class="photo-card" target="_blank" rel="noopener">
-      <img src="static/ALTAIR/OLIVEROS.JPG" alt="OLIVEROS" loading="lazy">
-      <span class="photo-index">22</span>
-      <div class="photo-card-overlay">
+      <span class="photo-index">23</span>
+      <div class="portrait-card">
+     <img src="static/ALTAIR/OLIVEROS.JPG" alt="XAVIER">
+        <div class="photo-card-overlay">
         <p class="photo-name">The Non-Newtonian</p>
         <p class="photo-cta">Write a Letter! <svg viewBox="0 0 10 10"><path d="M2 5h6M5 2l3 3-3 3"/></svg></p>
       </div>
-      <div class="photo-card-line"></div>
-    </a>
+    <div class="portrait-name">XAVIER</div>
+    </div>
+
     <a href="" class="photo-card" target="_blank" rel="noopener">
-      <img src="static/ALTAIR/PAMAN.JPG" alt="PAMAN O." loading="lazy">
-      <span class="photo-index">23</span>
-      <div class="photo-card-overlay">
-        <p class="photo-name">Boy Genius</p>
+      <span class="photo-index">24</span>
+      <div class="portrait-card">
+     <img src="static/ALTAIR/PAMAN.JPG" alt="OSRIC">
+        <div class="photo-card-overlay">
+        <p class="photo-name">Boy Geniusn</p>
         <p class="photo-cta">Write a Letter! <svg viewBox="0 0 10 10"><path d="M2 5h6M5 2l3 3-3 3"/></svg></p>
       </div>
-      <div class="photo-card-line"></div>
-    </a>
+    <div class="portrait-name">ORSIC</div>
+    </div>
+
     <a href="" class="photo-card" target="_blank" rel="noopener">
-      <img src="static/ALTAIR/PRENICOLAS.JPG" alt="PRENICOLAS" loading="lazy">
-      <span class="photo-index">24</span>
-      <div class="photo-card-overlay">
+      <span class="photo-index">25</span>
+      <div class="portrait-card">
+     <img src="static/ALTAIR/PRENICOLAS.JPG" alt="KIEL">
+        <div class="photo-card-overlay">
         <p class="photo-name">The Aleator</p>
         <p class="photo-cta">Write a Letter! <svg viewBox="0 0 10 10"><path d="M2 5h6M5 2l3 3-3 3"/></svg></p>
       </div>
-      <div class="photo-card-line"></div>
-    </a>
+    <div class="portrait-name">KIEL</div>
+    </div>
+
     <a href="" class="photo-card" target="_blank" rel="noopener">
-      <img src="static/ALTAIR/SAN MIGUEL.JPG" alt="SAN MIGUEL" loading="lazy">
-      <span class="photo-index">25</span>
-      <div class="photo-card-overlay">
-        <p class="photo-name">The Lingering Echo</p>
-        <p class="photo-cta">Write a Letter! <svg viewBox="0 0 10 10"><path d="M2 5h6M5 2l3 3-3 3"/></svg></p>
-      </div>
-      <div class="photo-card-line"></div>
-    </a>
-    <a href="" class="photo-card" target="_blank" rel="noopener">
-      <img src="static/ALTAIR/SORONGON.JPG" alt="SORONGON" loading="lazy">
       <span class="photo-index">26</span>
-      <div class="photo-card-overlay">
+      <div class="portrait-card">
+     <img src="static/ALTAIR/SORONGON.JPG" alt="JELL">
+        <div class="photo-card-overlay">
         <p class="photo-name">Carnation's Courtesy</p>
         <p class="photo-cta">Write a Letter! <svg viewBox="0 0 10 10"><path d="M2 5h6M5 2l3 3-3 3"/></svg></p>
       </div>
-      <div class="photo-card-line"></div>
-    </a>
+    <div class="portrait-name">JELLIANE</div>
+    </div>
+
     <a href="" class="photo-card" target="_blank" rel="noopener">
-      <img src="static/ALTAIR/TALAVERA.JPG" alt="TALAVERA" loading="lazy">
       <span class="photo-index">27</span>
-      <div class="photo-card-overlay">
+      <div class="portrait-card">
+     <img src="static/ALTAIR/TALAVERA.JPG" alt="CHINO">
+        <div class="photo-card-overlay">
         <p class="photo-name">The Circuit Runner</p>
         <p class="photo-cta">Write a Letter! <svg viewBox="0 0 10 10"><path d="M2 5h6M5 2l3 3-3 3"/></svg></p>
       </div>
-      <div class="photo-card-line"></div>
-    </a>
+    <div class="portrait-name">CHINO</div>
+    </div>
+
   </section>
 
   <footer class="bottom-nav">
