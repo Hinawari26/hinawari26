@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>POLARIS</title>
+<link rel="icon" href="static/MARK ONLY TRANSPARENT BG.png" type="image/x-icon">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600&family=Inconsolata:wght@300;400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --accent: #7eb8b5;
+    --accent-rgb: 126, 184, 181;
+    --text-light: rgba(255,255,255,0.85);
+    --text-muted: rgba(255,255,255,0.35);
+    --radius: 14px;
+    --card-border: rgba(255,255,255,0.07);
+  }
+  *,*::before,*::after { box-sizing:border-box; margin:0; padding:0; }
+  html,body { min-height:100%; background:var(--bg); font-family:'Cormorant Garamond',Georgia,serif; color:var(--text-light); overflow-x:hidden; }
+
+  /* grain */
+  body::before { content:''; position:fixed; inset:0; background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E"); opacity:0.03; pointer-events:none; z-index:9998; }
+
+  #transition-overlay { position:fixed; inset:0; background:#0a0a0f; z-index:99999; pointer-events:none; opacity:1; }
+
+  /* ambient */
+  .amb { position:fixed; border-radius:50%; filter:blur(130px); pointer-events:none; z-index:0; background:rgba(var(--accent-rgb),0.1); }
+  .amb-1 { width:700px; height:700px; top:-200px; left:-150px; animation:drift 22s ease-in-out infinite alternate; }
+  .amb-2 { width:500px; height:500px; bottom:-150px; right:-100px; opacity:0.5; animation:drift 18s ease-in-out infinite alternate-reverse; }
+  @keyframes drift { from{transform:translate(0,0);} to{transform:translate(60px,40px);} }
+
+  /* layout */
+  .page { position:relative; z-index:1; min-height:100dvh; display:flex; flex-direction:column; padding:clamp(20px,4vw,52px) clamp(20px,5vw,64px); gap:clamp(28px,4vh,48px); }
+
+  /* nav */
+  .nav { display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px; opacity:0; animation:fadeDown 0.7s cubic-bezier(0.16,1,0.3,1) 0.05s forwards; }
+  .back-btn { display:flex; align-items:center; gap:10px; text-decoration:none; color:var(--text-muted); font-family:'Inconsolata',monospace; font-size:clamp(10px,1.4vw,12px); letter-spacing:0.15em; text-transform:uppercase; transition:color 0.3s ease; }
+  .back-btn:hover { color:var(--accent); }
+  .back-btn svg { width:25px; height:25px; fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; transition:transform 0.3s cubic-bezier(0.34,1.56,0.64,1); }
+  .back-btn:hover svg { transform:translateX(-10px); }
+  .nav-right { display:flex; align-items:center; gap:24px; }
+  .nav-label { font-family:'Inconsolata',monospace; font-size:clamp(10px,1.2vw,11px); color:var(--text-muted); letter-spacing:0.2em; }
+  .nav-dots { display:flex; gap:7px; }
+  .nav-dot { width:6px; height:6px; border-radius:50%; background:rgba(255,255,255,0.15); }
+  .nav-dot.active { background:var(--accent); box-shadow:0 0 8px var(--accent); }
+
+  /* header */
+  .header { opacity:0; animation:fadeUp 0.8s cubic-bezier(0.16,1,0.3,1) 0.15s forwards; }
+  .header-inner { display:flex; align-items:flex-end; justify-content:space-between; flex-wrap:wrap; gap:16px; }
+  .header-eyebrow { font-family:'Inconsolata',monospace; font-size:clamp(10px,1.3vw,12px); letter-spacing:0.25em; color:var(--accent); text-transform:uppercase; margin-bottom:8px; }
+  .header-title { font-size:clamp(2rem,6vw,4.5rem); font-weight:300; line-height:1; letter-spacing:-0.02em; }
+  .header-title em { font-style:italic; color:var(--accent); }
+  .header-sub { font-family:'Inconsolata',monospace; font-size:clamp(10px,1.3vw,12px); color:var(--text-muted); letter-spacing:0.08em; margin-top:10px; }
+  .count-badge { font-family:'Inconsolata',monospace; font-size:clamp(11px,1.3vw,13px); color:var(--text-muted); letter-spacing:0.1em; padding:8px 16px; border:1px solid rgba(var(--accent-rgb),0.2); border-radius:100px; white-space:nowrap; align-self:center; }
+  .count-badge span { color:var(--accent); }
+
+  /* divider */
+  .divider { height:1px; background:linear-gradient(90deg, rgba(var(--accent-rgb),0.4), rgba(var(--accent-rgb),0.1) 50%, transparent); opacity:0; animation:fadeUp 0.6s ease 0.3s forwards; }
+
+  /* grid */
+  .photo-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(clamp(150px,16vw,200px),1fr)); gap:clamp(8px,1.5vw,12px); flex:1; }
+
+  /* photo card */
+  .photo-card { position:relative; aspect-ratio:1; border-radius:var(--radius); overflow:hidden; cursor:pointer; text-decoration:none; display:block; border:1px solid var(--card-border); opacity:0; transform:scale(0.9) translateY(16px); }
+  .photo-card.visible { animation:cardPop 0.6s cubic-bezier(0.16,1,0.3,1) forwards; overflow: visible; text-align:left; aspect-ratio:auto; margin-bottom:5px}
+  .photo-card img { width:100%; height:100%; object-fit:cover; display:block; transition:transform 0.55s cubic-bezier(0.23,1,0.32,1), filter 0.55s ease; filter:grayscale(20%) brightness(0.85); }
+  .photo-card:hover img { filter:grayscale(0%) brightness(1); }
+  /* overlay on hover */
+  .photo-card-overlay { position:absolute; inset:0; background:linear-gradient(to top, rgba(0,0,0,0.75) 0%, rgba(0,0,0,0.1) 50%, transparent 100%); opacity:0; transition:opacity 0.4s ease; display:flex; flex-direction:column; justify-content:flex-end; padding:clamp(10px,2vw,16px); }
+  .photo-card:hover .photo-card-overlay { opacity:1; }
+  .photo-name { font-size:clamp(0.75rem,1.4vw,0.95rem); font-weight:400; line-height:1.2; color:#fff; }
+  .photo-cta { font-family:'Inconsolata',monospace; font-size:clamp(9px,1vw,11px); letter-spacing:0.15em; color:var(--accent); text-transform:uppercase; margin-top:3px; display:flex; align-items:center; gap:5px; }
+  .photo-cta svg { width:10px; height:10px; fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; }
+  /* accent corner dot */
+  .photo-card::after { content:''; position:absolute; top:10px; right:10px; width:6px; height:6px; border-radius:50%; background:var(--accent); box-shadow:0 0 10px var(--accent); opacity:0; transition:opacity 0.4s ease; }
+  .photo-card:hover::after { opacity:1; }
+  /* index number */
+  .photo-index { position:absolute; top:10px; left:12px; font-family:'Inconsolata',monospace; font-size:10px; letter-spacing:0.15em; color:rgba(255,255,255,0.4); opacity:0; transition:opacity 0.4s ease; }
+  .photo-card:hover .photo-index { opacity:1; }
+  /* shimmer bottom border */
+  .photo-card-line { position:absolute; bottom:0; left:0; right:0; height:2px; background:linear-gradient(90deg, transparent, var(--accent), transparent); transform:scaleX(0); transition:transform 0.5s cubic-bezier(0.23,1,0.32,1); transform-origin:left; }
+  .photo-card:hover .photo-card-line { transform:scaleX(1); }
+
+  .photo-person { font-family:"Papyrus", "Herculanum", fantasy; font-size: clamp(8px, 0.9vw, 18px); letter-spacing:0.12em; color:rgba(244, 241, 241, 0.55); margin-top:2px;}
+
+  @keyframes cardPop {
+    0%   { opacity:0; transform:scale(0.9) translateY(16px); }
+    60%  { opacity:1; transform:scale(1.02) translateY(-2px); }
+    100% { opacity:1; transform:scale(1) translateY(0); }
+  }
+
+  .bottom-nav { display:flex; align-items:center; justify-content:space-between; padding-top:8px; opacity:0; animation:fadeUp 0.7s ease 0.4s forwards; }
+  .nav-pill { display:flex; align-items:center; gap:8px; text-decoration:none; color:var(--text-muted); font-family:'Inconsolata',monospace; font-size:clamp(10px,1.3vw,12px); letter-spacing:0.12em; padding:10px 0; transition:color 0.3s ease; }
+  .nav-pill:hover { color:var(--accent); }
+  .nav-pill svg { width:14px; height:14px; fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; }
+
+  @keyframes fadeDown { from{opacity:0;transform:translateY(-7px);} to{opacity:1;transform:translateY(0);} }
+  @keyframes fadeUp { from{opacity:0;transform:translateY(7px);} to{opacity:1;transform:translateY(0);} }
+
+  @media(max-width:480px) {
+    .header-inner { flex-direction:column; align-items:flex-start; }
+    .photo-grid { grid-template-columns:repeat(2,1fr); gap:8px; }
+    .photo-name {font-size:0.7rem;}
+    .photo-card-overlay {padding:10px;}
+    .photo-cta {font-size:8px;gap:3px;}
+  }
+  .photo-card:hover .portrait-name{opacity:0;}
+
+  .portrait-card {position: relative;aspect-ratio: 3/4; overflow: hidden;background: #111;border-radius: 10px;}
+
+  .portrait-card img {width: 100%;height: 100%;object-fit: cover;}
+
+  .portrait-name {position: absolute;bottom:  clamp(5px, 3vw,20px);left: 9px;opacity:1;transition: opacity 0.3s ease-in-out;font-family:'Inconsolata',monospace;font-size: clamp(25px, 2vw,48px);font-weight: 1000;color: #000;writing-mode: vertical-rl;transform: rotate(180deg); letter-spacing: 0.1em;}
+
+</style>
+</head>
+<body>
+<div id="transition-overlay"></div>
+<div class="amb amb-1"></div>
+<div class="amb amb-2"></div>
+
+<main class="page">
+
+  <nav class="nav">
+    <a href="index.html" class="back-btn" data-transition>
+      <svg viewBox="0 0 16 16"><path d="M10 3L5 8l5 5"/></svg>
+      All Collections
+    </a>
+    <div class="nav-right">
+      <span class="nav-label">02 - POLARIS</span>
+      <div class="nav-dots">
+        <div class="nav-dot"></div>
+        <div class="nav-dot active"></div>
+        <div class="nav-dot"></div>
+        <div class="nav-dot"></div>
+      </div>
+    </div>
+  </nav>
+
+  <header class="header">
+    <div class="header-inner">
+      <div>
+        <p class="header-eyebrow">hinawari vol. 26</p>
+        <h1 class="header-title"><em>Polaris</em></h1>
+        <p class="header-sub">Hover over the pictures to view. <br>Click to write them a grad letter!</p>
+      </div>
+      <div class="count-badge"><span>29</span> letters archived</div>
+    </div>
+  </header>
+
+  <div class="divider"></div>
+
+  <section class="photo-grid" id="photo-grid">
+    <a href="" class="photo-card" target="_blank" rel="noopener">
+      <span class="photo-index">01</span>
+      <div class="portrait-card">
+     <img src="static/POLARIS/ABIAN.JPG" alt="FAYE">
+        <div class="photo-card-overlay">
+        <p class="photo-name">The Steady Pysche</p>
+        <p class="photo-cta">Write a Letter! <svg viewBox="0 0 10 10"><path d="M2 5h6M5 2l3 3-3 3"/></svg></p>
+      </div>
+    <div class="portrait-name">FAYE</div>
+    </div>
+
+   <a href="" class="photo-card" target="_blank" rel="noopener">
+      <span class="photo-index">02</span>
+      <div class="portrait-card">
+     <img src="static/POLARIS/ARENSOL.JPG" alt="KNIGHT">
+        <div class="photo-card-overlay">
+        <p class="photo-name"></p>
+        <p class="photo-cta">Write a Letter! <svg viewBox="0 0 10 10"><path d="M2 5h6M5 2l3 3-3 3"/></svg></p>
+      </div>
+    <div class="portrait-name">KNIGHT</div>
+    </div>
+
+     <a href="" class="photo-card" target="_blank" rel="noopener">
+      <span class="photo-index">03</span>
+      <div class="portrait-card">
+     <img src="static/POLARIS/BARCENAS.JPG" alt="COLIN">
+        <div class="photo-card-overlay">
+        <p class="photo-name">The Little Prince</p>
+        <p class="photo-cta">Write a Letter! <svg viewBox="0 0 10 10"><path d="M2 5h6M5 2l3 3-3 3"/></svg></p>
+      </div>
+    <div class="portrait-name">COLIN</div>
+    </div>
+
+    <a href="" class="photo-card" target="_blank" rel="noopener">
+      <span class="photo-index">04</span>
+      <div class="portrait-card">
+     <img src="static/POLARIS/BERNAL.JPG" alt="FLORO">
+        <div class="photo-card-overlay">
+        <p class="photo-name">Steadfast Cypher</p>
+        <p class="photo-cta">Write a Letter! <svg viewBox="0 0 10 10"><path d="M2 5h6M5 2l3 3-3 3"/></svg></p>
+      </div>
+    <div class="portrait-name">FLORO</div>
+    </div>
+
+    <a href="" class="photo-card" target="_blank" rel="noopener">
+      <span class="photo-index">05</span>
+      <div class="portrait-card">
+     <img src="static/POLARIS/BICBIC.JPG" alt="MJ">
+        <div class="photo-card-overlay">
+        <p class="photo-name">The Ghost Rider</p>
+        <p class="photo-cta">Write a Letter! <svg viewBox="0 0 10 10"><path d="M2 5h6M5 2l3 3-3 3"/></svg></p>
+      </div>
+    <div class="portrait-name">MICHAEL</div>
+    </div>
+
+    <a href="" class="photo-card" target="_blank" rel="noopener">
+      <span class="photo-index">06</span>
+      <div class="portrait-card">
+     <img src="static/POLARIS/BOLIVAR.JPG" alt="GAB">
+        <div class="photo-card-overlay">
+        <p class="photo-name">Diva Fabulosa</p>
+        <p class="photo-cta">Write a Letter! <svg viewBox="0 0 10 10"><path d="M2 5h6M5 2l3 3-3 3"/></svg></p>
+      </div>
+    <div class="portrait-name">GAB</div>
+    </div>
+
+    <a href="" class="photo-card" target="_blank" rel="noopener">
+      <span class="photo-index">07</span>
+      <div class="portrait-card">
+     <img src="static/POLARIS/BRAGAT.JPG" alt="BRUCE">
+        <div class="photo-card-overlay">
+        <p class="photo-name">The Stormstride</p>
+        <p class="photo-cta">Write a Letter! <svg viewBox="0 0 10 10"><path d="M2 5h6M5 2l3 3-3 3"/></svg></p>
+      </div>
+    <div class="portrait-name">BRUCE</div>
+    </div>
+
+    <a href="" class="photo-card" target="_blank" rel="noopener">
+      <span class="photo-index">08</span>
+      <div class="portrait-card">
+     <img src="static/POLARIS/CAGUD.JPG" alt="VINCE">
+        <div class="photo-card-overlay">
+        <p class="photo-name">The Laidback Jester </p>
+        <p class="photo-cta">Write a Letter! <svg viewBox="0 0 10 10"><path d="M2 5h6M5 2l3 3-3 3"/></svg></p>
+      </div>
+    <div class="portrait-name">VINCE</div>
+    </div>
+
+    <a href="" class="photo-card" target="_blank" rel="noopener">
+      <span class="photo-index">09</span>
+      <div class="portrait-card">
+     <img src="static/POLARIS/CERVANTES.JPG" alt="JULIA">
+        <div class="photo-card-overlay">
+        <p class="photo-name">The Happy Ripple</p>
+        <p class="photo-cta">Write a Letter! <svg viewBox="0 0 10 10"><path d="M2 5h6M5 2l3 3-3 3"/></svg></p>
+      </div>
+    <div class="portrait-name">JULIA</div>
+    </div>
+
+    <a href="" class="photo-card" target="_blank" rel="noopener">
+      <span class="photo-index">10</span>
+      <div class="portrait-card">
+     <img src="static/POLARIS/DAODAOANG.JPG" alt="DIANNE">
+        <div class="photo-card-overlay">
+        <p class="photo-name">The Golden Serenity</p>
+        <p class="photo-cta">Write a Letter! <svg viewBox="0 0 10 10"><path d="M2 5h6M5 2l3 3-3 3"/></svg></p>
+      </div>
+    <div class="portrait-name">DIANNE</div>
+    </div>
+
+    
+
+    <a href="" class="photo-card" target="_blank" rel="noopener">
+      <span class="photo-index">11</span>
+      <div class="portrait-card">
+     <img src="static/POLARIS/ESCOBARTE.JPG" alt="JERICE">
+        <div class="photo-card-overlay">
+        <p class="photo-name">Muse-Touched</p>
+        <p class="photo-cta">Write a Letter! <svg viewBox="0 0 10 10"><path d="M2 5h6M5 2l3 3-3 3"/></svg></p>
+      </div>
+    <div class="portrait-name">JERICE</div>
+    </div>
+
+    <a href="" class="photo-card" target="_blank" rel="noopener">
+      <span class="photo-index">12</span>
+      <div class="portrait-card">
+     <img src="static/POLARIS/FOLLANTE.JPG" alt="KARL">
+        <div class="photo-card-overlay">
+        <p class="photo-name">the Curious Mind</p>
+        <p class="photo-cta">Write a Letter! <svg viewBox="0 0 10 10"><path d="M2 5h6M5 2l3 3-3 3"/></svg></p>
+      </div>
+    <div class="portrait-name">KARL</div>
+    </div>
+
+    <a href="" class="photo-card" target="_blank" rel="noopener">
+      <span class="photo-index">13</span>
+      <div class="portrait-card">
+     <img src="static/POLARIS/GALENDEZ.JPG" alt="FIONA">
+        <div class="photo-card-overlay">
+        <p class="photo-name">The Silent Achiever</p>
+        <p class="photo-cta">Write a Letter! <svg viewBox="0 0 10 10"><path d="M2 5h6M5 2l3 3-3 3"/></svg></p>
+      </div>
+    <div class="portrait-name">FIONA</div>
+    </div>
+
+    <a href="" class="photo-card" target="_blank" rel="noopener">
+      <span class="photo-index">14</span>
+      <div class="portrait-card">
+     <img src="static/POLARIS/LIM.JPG" alt="ISHA">
+        <div class="photo-card-overlay">
+        <p class="photo-name">The Hotshot</p>
+        <p class="photo-cta">Write a Letter! <svg viewBox="0 0 10 10"><path d="M2 5h6M5 2l3 3-3 3"/></svg></p>
+      </div>
+    <div class="portrait-name">ISHA</div>
+    </div>
+
+    <a href="" class="photo-card" target="_blank" rel="noopener">
+      <span class="photo-index">15</span>
+      <div class="portrait-card">
+     <img src="static/POLARIS/LOGRONIO.JPG" alt="KHAILLA">
+        <div class="photo-card-overlay">
+        <p class="photo-name">The People's Darling</p>
+        <p class="photo-cta">Write a Letter! <svg viewBox="0 0 10 10"><path d="M2 5h6M5 2l3 3-3 3"/></svg></p>
+      </div>
+    <div class="portrait-name">KHAILLA</div>
+    </div>
+
+    <a href="" class="photo-card" target="_blank" rel="noopener">
+      <span class="photo-index">16</span>
+      <div class="portrait-card">
+     <img src="static/POLARIS/LOPEZ.JPG" alt="RHYSS">
+        <div class="photo-card-overlay">
+        <p class="photo-name">The Chill Guy</p>
+        <p class="photo-cta">Write a Letter! <svg viewBox="0 0 10 10"><path d="M2 5h6M5 2l3 3-3 3"/></svg></p>
+      </div>
+    <div class="portrait-name">RHYSS</div>
+    </div>
+
+    <a href="" class="photo-card" target="_blank" rel="noopener">
+      <span class="photo-index">17</span>
+      <div class="portrait-card">
+     <img src="static/POLARIS/MATANGUIHAN.JPG" alt="SAMARA">
+        <div class="photo-card-overlay">
+        <p class="photo-name">Campus Confidant</p>
+        <p class="photo-cta">Write a Letter! <svg viewBox="0 0 10 10"><path d="M2 5h6M5 2l3 3-3 3"/></svg></p>
+      </div>
+    <div class="portrait-name">SAMARA</div>
+    </div>
+
+    <a href="" class="photo-card" target="_blank" rel="noopener">
+      <span class="photo-index">18</span>
+      <div class="portrait-card">
+     <img src="static/POLARIS/MERCADO.JPG" alt="JOSH">
+        <div class="photo-card-overlay">
+        <p class="photo-name">The Quiet Striker</p>
+        <p class="photo-cta">Write a Letter! <svg viewBox="0 0 10 10"><path d="M2 5h6M5 2l3 3-3 3"/></svg></p>
+      </div>
+    <div class="portrait-name">JOSH</div>
+    </div>
+
+    <a href="" class="photo-card" target="_blank" rel="noopener">
+      <span class="photo-index">19</span>
+      <div class="portrait-card">
+     <img src="static/POLARIS/ORCELINO.JPG" alt="JANNA">
+        <div class="photo-card-overlay">
+        <p class="photo-name">The Bookkeeperr</p>
+        <p class="photo-cta">Write a Letter! <svg viewBox="0 0 10 10"><path d="M2 5h6M5 2l3 3-3 3"/></svg></p>
+      </div>
+    <div class="portrait-name">JANNA</div>
+    </div>
+
+    <a href="" class="photo-card" target="_blank" rel="noopener">
+      <span class="photo-index">20</span>
+      <div class="portrait-card">
+     <img src="static/POLARIS/PAMAN.JPG" alt="ICEEH">
+        <div class="photo-card-overlay">
+        <p class="photo-name">"The Mellow Drift</p>
+        <p class="photo-cta">Write a Letter! <svg viewBox="0 0 10 10"><path d="M2 5h6M5 2l3 3-3 3"/></svg></p>
+      </div>
+    <div class="portrait-name">ICEEH</div>
+    </div>
+
+    <a href="" class="photo-card" target="_blank" rel="noopener">
+      <span class="photo-index">21</span>
+      <div class="portrait-card">
+     <img src="static/POLARIS/PINEDA.JPG" alt="PHIL">
+        <div class="photo-card-overlay">
+        <p class="photo-name">The Dawn Soul </p>
+        <p class="photo-cta">Write a Letter! <svg viewBox="0 0 10 10"><path d="M2 5h6M5 2l3 3-3 3"/></svg></p>
+      </div>
+    <div class="portrait-name">PHILIP</div>
+    </div>
+
+    <a href="" class="photo-card" target="_blank" rel="noopener">
+      <span class="photo-index">22</span>
+      <div class="portrait-card">
+     <img src="static/POLARIS/PORCIL.JPG" alt="LEXINE">
+        <div class="photo-card-overlay">
+        <p class="photo-name">The Team Player</p>
+        <p class="photo-cta">Write a Letter! <svg viewBox="0 0 10 10"><path d="M2 5h6M5 2l3 3-3 3"/></svg></p>
+      </div>
+    <div class="portrait-name">LEXINE</div>
+    </div>
+
+    <a href="" class="photo-card" target="_blank" rel="noopener">
+      <span class="photo-index">23</span>
+      <div class="portrait-card">
+     <img src="static/POLARIS/QUILAO.JPG" alt="COEY">
+        <div class="photo-card-overlay">
+        <p class="photo-name">The Night Owl</p>
+        <p class="photo-cta">Write a Letter! <svg viewBox="0 0 10 10"><path d="M2 5h6M5 2l3 3-3 3"/></svg></p>
+      </div>
+    <div class="portrait-name">COEY</div>
+    </div>
+
+    <a href="" class="photo-card" target="_blank" rel="noopener">
+      <span class="photo-index">24</span>
+      <div class="portrait-card">
+     <img src="static/POLARIS/RODRIGUEZ.JPG" alt="REV">
+        <div class="photo-card-overlay">
+        <p class="photo-name">The Arbiter</p>
+        <p class="photo-cta">Write a Letter! <svg viewBox="0 0 10 10"><path d="M2 5h6M5 2l3 3-3 3"/></svg></p>
+      </div>
+    <div class="portrait-name">REV</div>
+    </div>
+
+    <a href="" class="photo-card" target="_blank" rel="noopener">
+      <span class="photo-index">25</span>
+      <div class="portrait-card">
+     <img src="static/POLARIS/SISON.JPG" alt="NIKI">
+        <div class="photo-card-overlay">
+        <p class="photo-name">Princess Pretty</p>
+        <p class="photo-cta">Write a Letter! <svg viewBox="0 0 10 10"><path d="M2 5h6M5 2l3 3-3 3"/></svg></p>
+      </div>
+    <div class="portrait-name">NIKI</div>
+    </div>
+    
+    <a href="" class="photo-card" target="_blank" rel="noopener">
+      <span class="photo-index">26</span>
+      <div class="portrait-card">
+     <img src="static/POLARIS/SITCHON.JPG" alt="FRANZO">
+        <div class="photo-card-overlay">
+        <p class="photo-name">Sjky Blaze</p>
+        <p class="photo-cta">Write a Letter! <svg viewBox="0 0 10 10"><path d="M2 5h6M5 2l3 3-3 3"/></svg></p>
+      </div>
+    <div class="portrait-name">FRANZO</div>
+    </div>
+
+    <a href="" class="photo-card" target="_blank" rel="noopener">
+      <span class="photo-index">27</span>
+      <div class="portrait-card">
+     <img src="static/POLARIS/SUELTO.JPG" alt="LEEAND">
+        <div class="photo-card-overlay">
+        <p class="photo-name">Sentenza</p>
+        <p class="photo-cta">Write a Letter! <svg viewBox="0 0 10 10"><path d="M2 5h6M5 2l3 3-3 3"/></svg></p>
+      </div>
+    <div class="portrait-name">LEEAND</div>
+    </div>
+
+    <a href="" class="photo-card" target="_blank" rel="noopener">
+      <span class="photo-index">28</span>
+      <div class="portrait-card">
+     <img src="static/POLARIS/TAGIMACRUZ.JPG" alt="CHINO">
+        <div class="photo-card-overlay">
+        <p class="photo-name">Material Girl</p>
+        <p class="photo-cta">Write a Letter! <svg viewBox="0 0 10 10"><path d="M2 5h6M5 2l3 3-3 3"/></svg></p>
+      </div>
+    <div class="portrait-name">MARIEL</div>
+    </div>
+
+    <a href="" class="photo-card" target="_blank" rel="noopener">
+      <span class="photo-index">29</span>
+      <div class="portrait-card">
+     <img src="static/POLARIS/VALDEZ.JPG" alt="DYLL">
+        <div class="photo-card-overlay">
+        <p class="photo-name">The Visionary</p>
+        <p class="photo-cta">Write a Letter! <svg viewBox="0 0 10 10"><path d="M2 5h6M5 2l3 3-3 3"/></svg></p>
+      </div>
+    <div class="portrait-name">DYLL</div>
+    </div>
+
+  </section>
+
+
+</main>
+
+<script>
+  // Page fade-in
+  const overlay = document.getElementById('transition-overlay');
+  requestAnimationFrame(() => requestAnimationFrame(() => {
+    overlay.style.transition = 'opacity 0.55s cubic-bezier(0.16,1,0.3,1)';
+    overlay.style.opacity = '0';
+  }));
+
+  // Transition links
+  document.querySelectorAll('a[data-transition]').forEach(link => {
+    link.addEventListener('click', e => {
+      e.preventDefault();
+      const href = link.href;
+      overlay.style.transition = 'opacity 0.4s cubic-bezier(0.7,0,1,1)';
+      overlay.style.opacity = '1';
+      overlay.style.pointerEvents = 'all';
+      setTimeout(() => { window.location.href = href; }, 420);
+    });
+  });
+
+  
+  const cards = document.querySelectorAll('.photo-card');
+  let visibleCount = 0;
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const card = entry.target;
+        const delay = (visibleCount % 10) * 30; // stagger in groups
+        visibleCount++;
+        setTimeout(() => card.classList.add('visible'), delay);
+        obs.unobserve(card);
+      }
+    });
+  }, { threshold: 0.04 });
+  cards.forEach(c => obs.observe(c));
+</script>
+</body>
+</html>
